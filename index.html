@@ -1,0 +1,539 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Pr&aacute;ctica 5: Series de Fourier en tiempo continuo</title><meta name="generator" content="MATLAB 9.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2019-05-14"><meta name="DC.source" content="Codigopublish.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Pr&aacute;ctica 5: Series de Fourier en tiempo continuo</h1><!--introduction--><p>Integrantes del equipo: Ortega Gonz&aacute;lez Mois&eacute;s Donaldo,Ortiz Colin Cesar Antonio</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Introducci&oacute;n:</a></li><li><a href="#2">Ejemplo 6.1</a></li><li><a href="#4">Ejemplo 6.2</a></li><li><a href="#6">Ejemplo 6.4</a></li><li><a href="#8">Ejemplo 6.5</a></li><li><a href="#10">Ejemplo 6.7</a></li><li><a href="#12">C&oacute;digo similar al COMPUTER EXAMPLE C6.2</a></li><li><a href="#13">C&oacute;digo-algoritmo del trapecio y tabla comparativa</a></li></ul></div><h2 id="1">Introducci&oacute;n:</h2><pre class="codeinput"><span class="comment">%Lathi explica en la secci&oacute;n 6.6 del libro que es posible calcular los</span>
+<span class="comment">%coeficientes Dn de la serie de Fourier aplicando la transformada de</span>
+<span class="comment">%Fourier para tiempo discreto, la cu&aacute;l usa muestreos de una se&ntilde;al en cierto</span>
+<span class="comment">%periodo T0. Para un intervalo de muestreo T, por lo cu&aacute;l obtendr&iacute;amos N0</span>
+<span class="comment">%muestras con N0=T0/T.</span>
+<span class="comment">%Lathi encuentra una relaci&oacute;n entre los coeficientes Dn y las muestras N0,</span>
+<span class="comment">%al sustituirla N0 en la f&oacute;rmula.</span>
+<span class="comment">%Lathi hace enf&aacute;sis en la periodicidad de los coeficientes.</span>
+<span class="comment">%En el desarrollo del ejemplo, utiliza un N0 bastante grande, ya que</span>
+<span class="comment">%aumenta la precisi&oacute;n del c&aacute;lculo con los arm&oacute;nicos. Tambi&eacute;n dice que es</span>
+<span class="comment">%conveniente que la energ&iacute;a de la funci&oacute;n sea 2, por lo tanto elige N0=256.</span>
+<span class="comment">%</span>
+</pre><h2 id="2">Ejemplo 6.1</h2><p>La funcion a la que se le pide calcular la serie de fourier es <img src="Codigopublish_eq15154762557279610835.png" alt="$f(t)=exp(-t/2)$">, de donde el valor de a0=0.504, <img src="Codigopublish_eq05746370474119176957.png" alt="$an=(0.504*2)/(1+16*n^2)$"> y <img src="Codigopublish_eq02493385012982369742.png" alt="$bn=(0.504*8n)/(1+16*n^2)$"> obtenidos previamente A continuacion se introducen los valores requeridos:</p><pre class="codeinput">t0=0;<span class="comment">% Valor inicial donde se calcul&oacute; la serie de fourier</span>
+tf=pi;<span class="comment">% Valor final</span>
+f=@(t) exp(-t/2); <span class="comment">% funcion original a la que se le har&aacute; serie de fourier</span>
+<span class="comment">% Valores de los coeficientes</span>
+a0=0.504;
+an=@(n) (0.504*2)/(1+(16*n*n));
+bn=@(n) (0.504*8*n)/(1+(16*n*n));
+<span class="comment">% a y b se refieren al intevalo para realizar la grafica de la serie</span>
+a=-7;
+b=10;
+armo=4; <span class="comment">% numero de armonicos a realizar</span>
+<span class="comment">% Llamado a la funcion respectiva</span>
+figure (1) <span class="comment">% Para que no se traslapan los resultados de las graficas posteriores lo pondremos en distintos figure</span>
+hFig = figure(1);
+sfc1(t0,tf,an,bn,a0,f,armo,a,b,hFig)
+</pre><img vspace="5" hspace="5" src="Codigopublish_01.png" alt=""> <p>A continuacion todo lo anterior para  15 armonicos</p><pre class="codeinput">t0=0;
+tf=pi;
+f=@(t) exp(-t/2);
+a0=0.504;
+an=@(n) (0.504*2)/(1+(16*n*n));
+bn=@(n) (0.504*8*n)/(1+(16*n*n));
+a=-7;
+b=10;
+ar=15;
+figure (2)
+hFig = figure(2);
+sfc1(t0,tf,an,bn,a0,f,ar,a,b,hFig)
+</pre><img vspace="5" hspace="5" src="Codigopublish_02.png" alt=""> <h2 id="4">Ejemplo 6.2</h2><p>Para este ejemplo nos dan la serie trigonometrica compacta donde <img src="Codigopublish_eq14583735361810102067.png" alt="$cn=bn=(8*A/pi^2*n^2)*sin((n*pi)/2)$"> dado que a0=an=0; por tanto se tuvo que calcular dn ya se a partir de cn o realizando el calculo desde cero,quedando de la siguiente manea:</p><pre class="codeinput">figure(11)
+s=imread(<span class="string">'2.png'</span>);
+imshow(s)
+A=3;<span class="comment">% valor especificado</span>
+f=@(t) (2*A*t.*(t&gt;=-1/2 &amp; t&lt;=1/2))+(2*A*(1-t).*(t&gt;1/2 &amp; t&lt;=3/2)); <span class="comment">% funci&oacute;n original</span>
+dn=@(n) (0.5*(((3*(exp(-1.5*pi*n*j)-exp(.5*pi*n*j)))/(pi*n*j))+((6*(exp(-1.5*pi*n*j)-2*exp(-.5*pi*n*j)+exp(.5*pi*n*j)))/(-pi^2*n^2))));
+a=-5;<span class="comment">%a,b elegidos al azar para mostrar 5 repeticiones de la serie</span>
+b=6;
+armo=5;
+t0=-1/2;<span class="comment">%valor inicial para hacer la serie</span>
+tf=3/2;<span class="comment">%valor final para hacer la serie</span>
+d0=0;
+figure (3)
+hFig = figure(3);
+sfc(t0,tf,dn,d0,f,armo,a,b,hFig)
+</pre><img vspace="5" hspace="5" src="Codigopublish_03.png" alt=""> <img vspace="5" hspace="5" src="Codigopublish_04.png" alt=""> <p>Todo lo anterior para 15 armonicos</p><pre class="codeinput">A=3;
+f=@(t) (2*A*t.*(t&gt;=-1/2 &amp; t&lt;=1/2))+(2*A*(1-t).*(t&gt;1/2 &amp; t&lt;=3/2));
+dn=@(n) (0.5*(((3*(exp(-1.5*pi*n*j)-exp(.5*pi*n*j)))/(pi*n*j))+((6*(exp(-1.5*pi*n*j)-2*exp(-.5*pi*n*j)+exp(.5*pi*n*j)))/(-pi^2*n^2))));
+a=-5;
+b=6;
+armo=15;
+t0=-1/2;
+tf=3/2;
+d0=0;
+figure (4)
+hFig = figure(4);
+sfc(t0,tf,dn,d0,f,armo,a,b,hFig)
+</pre><img vspace="5" hspace="5" src="Codigopublish_05.png" alt=""> <h2 id="6">Ejemplo 6.4</h2><p>En este ejemplo se pide calcualr a serie de fourier al un pulspo-cuadrado,nos brindan la serie trigonometrica de fourier por ende nosotros debimos calcular la dn que se mostrara en la imagen siguiente</p><pre class="codeinput">figure(12)
+s=imread(<span class="string">'4.png'</span>);
+imshow(s)
+f=@(t) 1.*(t&gt;=-pi/2 &amp; t&lt;=pi/2);<span class="comment">% funcion original</span>
+t0=-pi;<span class="comment">%valor inicial para calcular la serie</span>
+tf=pi;<span class="comment">% valor final para calcular la serie</span>
+a=-3*pi;<span class="comment">%a y b elegidos al azar de forma que se muestren 5 repeticiones de la serie</span>
+b=3*pi;
+armo=5;<span class="comment">% para 5 armonicos</span>
+do=.5;<span class="comment">% obtenido al hacer la analogia de a0=c0=d0 para este caso en especifico</span>
+dn=@(n) 1.*((exp(-.5*pi*n*j)-exp(.5*pi*n*j))/(-2*pi*n*j));
+figure (5)
+hFig = figure(5);
+sfc(t0,tf,dn,do,f,armo,a,b,hFig)
+</pre><img vspace="5" hspace="5" src="Codigopublish_06.png" alt=""> <img vspace="5" hspace="5" src="Codigopublish_07.png" alt=""> <p>Todo lo anterior para 15 armonicos</p><pre class="codeinput">f=@(t) 1.*(t&gt;=-pi/2 &amp; t&lt;=pi/2);
+t0=-pi;
+tf=pi;
+a=-3*pi;
+b=3*pi;
+armo=15;<span class="comment">%15 armonicos</span>
+do=.5;
+dn=@(n) ((exp(.5*pi*n*j)-exp(-.5*pi*n*j))/(2*pi*n*j));
+figure (6)
+hFig = figure(6);
+sfc(t0,tf,dn,do,f,armo,a,b,hFig)
+</pre><img vspace="5" hspace="5" src="Codigopublish_08.png" alt=""> <h2 id="8">Ejemplo 6.5</h2><p>La funcion original es <img src="Codigopublish_eq15154762557279610835.png" alt="$f(t)=exp(-t/2)$"> , <img src="Codigopublish_eq16375047822760689139.png" alt="$dn=(0.504/(1+(4*n*j)))$"> ,&amp;d0=0.504&amp; A continuacion el codigo para cuatro armonicos</p><pre class="codeinput">d0=0.504;
+dn=@(n) 0.504/(1+4*n*j);
+t0=0;
+tf=pi;
+f=@(t) exp(-t/2);
+armo=4;
+a=-7;
+b=10;
+figure (7)
+hFig = figure(7);
+sfc(t0,tf,dn,d0,f,armo,a,b,hFig)
+</pre><img vspace="5" hspace="5" src="Codigopublish_09.png" alt=""> <p>Todo lo anterior para 15 armonicos</p><pre class="codeinput">d0=0.504;
+dn=@(n) 0.504/(1+4*n*j);
+t0=0;
+tf=pi;
+f=@(t) exp(-t/2);
+armo2=15;
+a=-7;
+b=10;
+figure (8)
+hFig = figure(8);
+sfc(t0,tf,dn,d0,f,armo2,a,b,hFig)
+</pre><img vspace="5" hspace="5" src="Codigopublish_10.png" alt=""> <h2 id="10">Ejemplo 6.7</h2><p>Para este ejemplo se pide hacerle serie de fourier al impulso(delta de dirac) , por ende la funcion es la delta de dirac, con <img src="Codigopublish_eq12985185978689104128.png" alt="$dn=1/To$"> encontrado previamente</p><pre class="codeinput">To=3;<span class="comment">% valor pedido</span>
+t0=-To/2; <span class="comment">% valor inicial en calcular la serie</span>
+tf=To/2; <span class="comment">% valor final donde calcular la serie</span>
+a=-7;<span class="comment">% a y b de forma que se muestren 5 repeticiones de la serie(elegidos al azar)</span>
+b=7;
+dn=1/To;
+armo=4;
+d0=1/3;
+figure (9)
+hFig = figure(9);
+sfc7(t0,tf,dn,d0,armo,a,b,hFig)
+</pre><img vspace="5" hspace="5" src="Codigopublish_11.png" alt=""> <p>Todo lo anterior  para 15 armonicos</p><pre class="codeinput">To=3;
+t0=-To/2;
+tf=To/2;
+a=-7;
+b=7;
+dn=1/To;
+armo=15;
+d0=1/3;
+figure (10)
+hFig = figure(10);
+sfc7(t0,tf,dn,d0,armo,a,b,hFig)
+</pre><img vspace="5" hspace="5" src="Codigopublish_12.png" alt=""> <h2 id="12">C&oacute;digo similar al COMPUTER EXAMPLE C6.2</h2><p>A continuacion el codigo del lathi aplicado al ejemplo 6.2</p><pre>  A=3;
+  f=@(t) (2*A*t.*(t&gt;=-1/2 &amp; t&lt;=1/2))+(2*A*(1-t).*(t&gt;1/2 &amp; t&lt;=3/2));
+  t0=-1/2;%valor inicial para hacer la serie
+  tf=3/2;%valor final para hacer la serie
+  t=t0:0.0001:tf;
+  sumterms = zeros(16, length(t));
+  sumterms(1,:) = 1/2;
+  for n = 1:size(sumterms,1)-1
+  sumterms(n+1,:) = (2/(pi*n)*sin(pi*n/2))*cos(n*t);
+  end
+  x_N = cumsum (sumterms);
+  figure(14);
+  clf;
+  ind = 0;
+  for N = [0,1:2:size(sumterms, 1)-1]
+  ind = ind+1;
+  subplot (3,3,ind);
+  plot (t,x_N(N+1), 'k',t,f(t), 'k--')
+  axis ([-2*pi 2*pi -0.2 1.2]);
+  xlabel ('t');
+  ylabel (['x_{',num2str(N),'} (t)']);
+  end</pre><h2 id="13">C&oacute;digo-algoritmo del trapecio y tabla comparativa</h2><pre class="codeinput">syms <span class="string">t</span>
+n=(0:4);
+f=exp(-t/2);
+ti=0; tf=pi; t0=tf-ti; w0=2*pi/t0;
+f2(t)=f*exp(-n*w0*1i*t);
+
+Dn=(1/t0)*int(f2,t,ti,tf);
+exacto=double (Dn);
+<span class="comment">%trapecio</span>
+m=15000;
+n=(0:4);
+b=pi; a=0; t=-100:.1:100;
+w0=2*pi/(b-a);
+f=@(t) exp(-t/2)*exp(-n*w0*1i*t);
+
+h=(b-a)/m;
+
+aprox=f(a)+f(b);
+<span class="keyword">for</span> i=1:m-1
+x=a+i*h;
+aprox=aprox+2*f(x);
+<span class="keyword">end</span>
+aprox=(h/2)*aprox;
+trapecio=aprox;
+<span class="comment">%metodo lathi</span>
+T_0 = pi;
+N_0 = 256;
+T = T_0/N_0;
+x = (0:T:T*(N_0-1))';
+
+h = exp(-x/2);
+h(1) = (exp(-pi/2) + 1)/2;
+D_n = fft (h)/N_0;
+
+Lathi=[D_n(1) D_n(2) D_n(3) D_n(4) D_n(5)];
+<span class="comment">%errores</span>
+error_trapecio=abs(exacto-trapecio);
+error_LATHI=abs(exacto-Lathi);
+<span class="comment">%columna</span>
+coeficiente= {<span class="string">'d0'</span>;<span class="string">'d1'</span>;<span class="string">'d2'</span>;<span class="string">'d3'</span>;<span class="string">'d4'</span>};
+exacto=vec2mat(exacto,1);
+trapecio=vec2mat(trapecio,1);
+error_trapecio=vec2mat(error_trapecio,1);
+Lathi=vec2mat(Lathi,1);
+error_LATHI=vec2mat(error_LATHI,1);
+T=table(exacto,trapecio,Lathi,error_trapecio,error_LATHI)
+</pre><pre class="codeoutput">
+T =
+
+  5&times;5 table
+
+          exacto                trapecio                Lathi           error_trapecio    error_LATHI
+    ___________________    __________________    ___________________    ______________    ___________
+
+      0.50428+0i              1.5842+0i            0.50428+0i               1.08          1.5822e-06 
+     0.029664-0.11865i      0.093191-0.37276i     0.029665-0.11865i      0.26193          6.5235e-06 
+    0.0077581-0.062065i     0.024373-0.19498i    0.0077597-0.062053i     0.13395          1.2756e-05 
+    0.0034778-0.041733i     0.010926-0.13111i    0.0034794-0.041714i    0.089686          1.9053e-05 
+    0.0019622-0.031395i    0.0061644-0.09863i    0.0019638-0.03137i     0.067366          2.5368e-05 
+
+</pre><pre class="codeinput"><span class="comment">%Referencias</span>
+<span class="comment">%Lathi, B. P., (2005). Linear Systems and Signals. EUA: Oxford university Press</span>
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2017b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Práctica 5: Series de Fourier en tiempo continuo
+% Integrantes del equipo: Ortega González Moisés Donaldo,Ortiz Colin Cesar Antonio
+%% Introducción:                         
+%Lathi explica en la sección 6.6 del libro que es posible calcular los
+%coeficientes Dn de la serie de Fourier aplicando la transformada de
+%Fourier para tiempo discreto, la cuál usa muestreos de una señal en cierto
+%periodo T0. Para un intervalo de muestreo T, por lo cuál obtendríamos N0
+%muestras con N0=T0/T.
+%Lathi encuentra una relación entre los coeficientes Dn y las muestras N0,
+%al sustituirla N0 en la fórmula.
+%Lathi hace enfásis en la periodicidad de los coeficientes.
+%En el desarrollo del ejemplo, utiliza un N0 bastante grande, ya que
+%aumenta la precisión del cálculo con los armónicos. También dice que es
+%conveniente que la energía de la función sea 2, por lo tanto elige N0=256.
+%
+%% Ejemplo 6.1
+% La funcion a la que se le pide calcular la serie de fourier es
+% $f(t)=exp(-t/2)$, de donde el valor de a0=0.504,
+% $an=(0.504*2)/(1+16*n^2)$ y $bn=(0.504*8n)/(1+16*n^2)$ obtenidos
+% previamente
+% A continuacion se introducen los valores requeridos:
+t0=0;% Valor inicial donde se calculó la serie de fourier
+tf=pi;% Valor final
+f=@(t) exp(-t/2); % funcion original a la que se le hará serie de fourier
+% Valores de los coeficientes
+a0=0.504;
+an=@(n) (0.504*2)/(1+(16*n*n));
+bn=@(n) (0.504*8*n)/(1+(16*n*n));
+% a y b se refieren al intevalo para realizar la grafica de la serie
+a=-7;
+b=10;
+armo=4; % numero de armonicos a realizar
+% Llamado a la funcion respectiva
+figure (1) % Para que no se traslapan los resultados de las graficas posteriores lo pondremos en distintos figure
+hFig = figure(1);
+sfc1(t0,tf,an,bn,a0,f,armo,a,b,hFig)
+%%
+% A continuacion todo lo anterior para  15 armonicos
+t0=0;
+tf=pi;
+f=@(t) exp(-t/2);
+a0=0.504;
+an=@(n) (0.504*2)/(1+(16*n*n));
+bn=@(n) (0.504*8*n)/(1+(16*n*n));
+a=-7;
+b=10;
+ar=15;
+figure (2) 
+hFig = figure(2);
+sfc1(t0,tf,an,bn,a0,f,ar,a,b,hFig)
+
+%% Ejemplo 6.2
+% Para este ejemplo nos dan la serie trigonometrica compacta donde $cn=bn=(8*A/pi^2*n^2)*sin((n*pi)/2)$
+% dado que a0=an=0; por tanto se tuvo que calcular dn ya se a partir de cn
+% o realizando el calculo desde cero,quedando de la siguiente manea:
+figure(11)
+s=imread('2.png');
+imshow(s)
+A=3;% valor especificado
+f=@(t) (2*A*t.*(t>=-1/2 & t<=1/2))+(2*A*(1-t).*(t>1/2 & t<=3/2)); % función original
+dn=@(n) (0.5*(((3*(exp(-1.5*pi*n*j)-exp(.5*pi*n*j)))/(pi*n*j))+((6*(exp(-1.5*pi*n*j)-2*exp(-.5*pi*n*j)+exp(.5*pi*n*j)))/(-pi^2*n^2))));
+a=-5;%a,b elegidos al azar para mostrar 5 repeticiones de la serie
+b=6;
+armo=5;
+t0=-1/2;%valor inicial para hacer la serie
+tf=3/2;%valor final para hacer la serie
+d0=0;
+figure (3) 
+hFig = figure(3);
+sfc(t0,tf,dn,d0,f,armo,a,b,hFig)
+%%
+% Todo lo anterior para 15 armonicos
+A=3;
+f=@(t) (2*A*t.*(t>=-1/2 & t<=1/2))+(2*A*(1-t).*(t>1/2 & t<=3/2));
+dn=@(n) (0.5*(((3*(exp(-1.5*pi*n*j)-exp(.5*pi*n*j)))/(pi*n*j))+((6*(exp(-1.5*pi*n*j)-2*exp(-.5*pi*n*j)+exp(.5*pi*n*j)))/(-pi^2*n^2))));
+a=-5;
+b=6;
+armo=15;
+t0=-1/2;
+tf=3/2;
+d0=0;
+figure (4) 
+hFig = figure(4);
+sfc(t0,tf,dn,d0,f,armo,a,b,hFig)
+
+%% Ejemplo 6.4
+% En este ejemplo se pide calcualr a serie de fourier al un pulspo-cuadrado,nos brindan la serie trigonometrica de fourier por ende
+% nosotros debimos calcular la dn que se mostrara en la imagen siguiente
+figure(12)
+s=imread('4.png');
+imshow(s)
+f=@(t) 1.*(t>=-pi/2 & t<=pi/2);% funcion original
+t0=-pi;%valor inicial para calcular la serie
+tf=pi;% valor final para calcular la serie
+a=-3*pi;%a y b elegidos al azar de forma que se muestren 5 repeticiones de la serie
+b=3*pi;
+armo=5;% para 5 armonicos
+do=.5;% obtenido al hacer la analogia de a0=c0=d0 para este caso en especifico
+dn=@(n) 1.*((exp(-.5*pi*n*j)-exp(.5*pi*n*j))/(-2*pi*n*j));
+figure (5) 
+hFig = figure(5);
+sfc(t0,tf,dn,do,f,armo,a,b,hFig)
+%%
+% Todo lo anterior para 15 armonicos
+f=@(t) 1.*(t>=-pi/2 & t<=pi/2);
+t0=-pi;
+tf=pi;
+a=-3*pi;
+b=3*pi;
+armo=15;%15 armonicos
+do=.5;
+dn=@(n) ((exp(.5*pi*n*j)-exp(-.5*pi*n*j))/(2*pi*n*j));
+figure (6) 
+hFig = figure(6);
+sfc(t0,tf,dn,do,f,armo,a,b,hFig)
+
+
+%% Ejemplo 6.5
+% La funcion original es $f(t)=exp(-t/2)$ , $dn=(0.504/(1+(4*n*j)))$ ,&d0=0.504&
+% A continuacion el codigo para cuatro armonicos
+d0=0.504;
+dn=@(n) 0.504/(1+4*n*j);
+t0=0;
+tf=pi;
+f=@(t) exp(-t/2);
+armo=4;
+a=-7;
+b=10;
+figure (7) 
+hFig = figure(7);
+sfc(t0,tf,dn,d0,f,armo,a,b,hFig)
+%%
+% Todo lo anterior para 15 armonicos
+d0=0.504;
+dn=@(n) 0.504/(1+4*n*j);
+t0=0;
+tf=pi;
+f=@(t) exp(-t/2);
+armo2=15;
+a=-7;
+b=10;
+figure (8) 
+hFig = figure(8);
+sfc(t0,tf,dn,d0,f,armo2,a,b,hFig)
+%% Ejemplo 6.7
+% Para este ejemplo se pide hacerle serie de fourier al impulso(delta de
+% dirac) , por ende la funcion es la delta de dirac, con $dn=1/To$
+% encontrado previamente
+To=3;% valor pedido
+t0=-To/2; % valor inicial en calcular la serie
+tf=To/2; % valor final donde calcular la serie
+a=-7;% a y b de forma que se muestren 5 repeticiones de la serie(elegidos al azar)
+b=7;
+dn=1/To;
+armo=4;
+d0=1/3;
+figure (9) 
+hFig = figure(9);
+sfc7(t0,tf,dn,d0,armo,a,b,hFig)
+%% 
+% Todo lo anterior  para 15 armonicos
+To=3;
+t0=-To/2;
+tf=To/2;
+a=-7;
+b=7;
+dn=1/To;
+armo=15;
+d0=1/3;
+figure (10) 
+hFig = figure(10);
+sfc7(t0,tf,dn,d0,armo,a,b,hFig)
+%% Código similar al COMPUTER EXAMPLE C6.2
+% A continuacion el codigo del lathi aplicado al ejemplo 6.2
+%
+%    A=3;
+%    f=@(t) (2*A*t.*(t>=-1/2 & t<=1/2))+(2*A*(1-t).*(t>1/2 & t<=3/2));
+%    t0=-1/2;%valor inicial para hacer la serie
+%    tf=3/2;%valor final para hacer la serie
+%    t=t0:0.0001:tf;
+%    sumterms = zeros(16, length(t)); 
+%    sumterms(1,:) = 1/2;
+%    for n = 1:size(sumterms,1)-1
+%    sumterms(n+1,:) = (2/(pi*n)*sin(pi*n/2))*cos(n*t);
+%    end
+%    x_N = cumsum (sumterms);
+%    figure(14); 
+%    clf; 
+%    ind = 0;
+%    for N = [0,1:2:size(sumterms, 1)-1]
+%    ind = ind+1;
+%    subplot (3,3,ind);
+%    plot (t,x_N(N+1), 'k',t,f(t), 'kREPLACE_WITH_DASH_DASH') 
+%    axis ([-2*pi 2*pi -0.2 1.2]);
+%    xlabel ('t'); 
+%    ylabel (['x_{',num2str(N),'} (t)']);
+%    end
+%% Código-algoritmo del trapecio y tabla comparativa
+syms t
+n=(0:4);
+f=exp(-t/2);
+ti=0; tf=pi; t0=tf-ti; w0=2*pi/t0;
+f2(t)=f*exp(-n*w0*1i*t);
+
+Dn=(1/t0)*int(f2,t,ti,tf);
+exacto=double (Dn);
+%trapecio
+m=15000;
+n=(0:4);
+b=pi; a=0; t=-100:.1:100;
+w0=2*pi/(b-a);
+f=@(t) exp(-t/2)*exp(-n*w0*1i*t);
+
+h=(b-a)/m;
+
+aprox=f(a)+f(b);
+for i=1:m-1
+x=a+i*h;
+aprox=aprox+2*f(x);
+end
+aprox=(h/2)*aprox;
+trapecio=aprox;
+%metodo lathi 
+T_0 = pi;
+N_0 = 256; 
+T = T_0/N_0; 
+x = (0:T:T*(N_0-1))';
+
+h = exp(-x/2);
+h(1) = (exp(-pi/2) + 1)/2;
+D_n = fft (h)/N_0;
+
+Lathi=[D_n(1) D_n(2) D_n(3) D_n(4) D_n(5)];
+%errores
+error_trapecio=abs(exacto-trapecio);
+error_LATHI=abs(exacto-Lathi);
+%columna
+coeficiente= {'d0';'d1';'d2';'d3';'d4'};
+exacto=vec2mat(exacto,1);
+trapecio=vec2mat(trapecio,1);
+error_trapecio=vec2mat(error_trapecio,1);
+Lathi=vec2mat(Lathi,1);
+error_LATHI=vec2mat(error_LATHI,1);
+T=table(exacto,trapecio,Lathi,error_trapecio,error_LATHI)
+
+
+%%
+%Referencias
+%Lathi, B. P., (2005). Linear Systems and Signals. EUA: Oxford university Press
+##### SOURCE END #####
+--></body></html>
